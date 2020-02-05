@@ -16,11 +16,10 @@ with open('ids.json') as json_file:
 
 SCOPES = 'https://www.googleapis.com/auth/spreadsheets'
 SPREADSHEET_ID = data['spreadsheetID']
-RANGE_NAME = data['rangeName']
 BOT_TOKEN = data['botToken']
 
 # init Google Spreadsheets API
-
+print('Connecting to Google Sheets API...')
 creds = None
 if os.path.exists('token.pickle'):
     with open('token.pickle', 'rb') as token:
@@ -35,8 +34,20 @@ if not creds or not creds.valid:
         pickle.dump(creds, token)
 service = build('sheets', 'v4', credentials=creds)
 sheet = service.spreadsheets()
+print('Connected to Google Sheets API')
 
 # init Discord bot API
-bot = commands.Bot(command_prefix='>')
 
-bot.run(btoken)
+print('Connecting to Discord bot API...')
+bot = commands.Bot(command_prefix='?')
+
+@bot.event
+async def on_ready():
+    print(f'Logged in as:\n{bot.user.name}\n{bot.user.id}\n------')
+
+# bot commands
+@bot.command()
+async def mapwr(ctx, map: str):
+    pass
+
+bot.run(BOT_TOKEN)
