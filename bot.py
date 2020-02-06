@@ -63,11 +63,15 @@ async def mapwr(ctx, map: str):
         await ctx.send('Invalid map')
 
 @bot.command()
-async def addmap(ctx):
+async def addmap(ctx, date, team, result, map, score):
     pass
 
 @bot.command()
 async def patchnotes(ctx):
     await ctx.send('https://www.esportstales.com/overwatch/list-all-hero-updates-and-balance-changes')
 
-bot.run(BOT_TOKEN)
+try:
+    bot.run(BOT_TOKEN)
+except:
+    with open('token.pickle', 'wb') as token:
+        pickle.dump(creds, token)
