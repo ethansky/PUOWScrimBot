@@ -53,14 +53,21 @@ async def mapwr(ctx, map: str):
     maps = [''.join(x) for x in mdata[0]['values']]
     winrates = [''.join(x) for x in mdata[1]['values']]
     mapwr_dict = dict(zip(maps, winrates))
-    winrate = mapwr_dict[map.upper()]
-    if winrate == '-':
-        await ctx.send('No data')
-    else:
-        await ctx.send(f'{map}:{winrate}')
+    try:
+        winrate = mapwr_dict[map.upper()]
+        if winrate == '-':
+            await ctx.send('No data')
+        else:
+            await ctx.send(f'{map}:{winrate}')
+    except:
+        await ctx.send('Invalid map')
 
 @bot.command()
 async def addmap(ctx):
     pass
+
+@bot.command()
+async def patchnotes(ctx):
+    await ctx.send('https://www.esportstales.com/overwatch/list-all-hero-updates-and-balance-changes')
 
 bot.run(BOT_TOKEN)
