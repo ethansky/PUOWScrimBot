@@ -48,6 +48,19 @@ async def on_ready():
 # bot commands
 @bot.command()
 async def mapwr(ctx, map: str):
+    result = sheet.values().batchGet(spreadsheetId=SPREADSHEET_ID, ranges=['Sheet1!H6:H26','Sheet1!L6:L26']).execute()
+    mdata = result.get('valueRanges',[])
+    maps = [''.join(x) for x in mdata[0]['values']]
+    winrates = [''.join(x) for x in mdata[1]['values']]
+    mapwr_dict = dict(zip(maps, winrates))
+    winrate = mapwr_dict[map.upper()]
+    if winrate == '-':
+        await ctx.send('No data')
+    else:
+        await ctx.send(f'{map}:{winrate}')
+
+@bot.command()
+async def addmap(ctx):
     pass
 
 bot.run(BOT_TOKEN)
