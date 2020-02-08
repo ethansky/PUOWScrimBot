@@ -5,6 +5,7 @@ import os.path
 import pickle
 import json
 import discord
+import pprint
 from discord.ext import commands
 from google.auth.transport.requests import Request
 from google_auth_oauthlib.flow import InstalledAppFlow
@@ -63,8 +64,10 @@ async def mapwr(ctx, map: str):
         await ctx.send('Invalid map')
 
 @bot.command()
-async def addmap(ctx, date, team, result, map, score):
-    pass
+async def addmap(ctx, date, team, result, map, score, notes):
+    response = sheet.values().get(spreadsheetId=SPREADSHEET_ID, range='Sheet1!A6:A', valueRenderOption='UNFORMATTED_VALUE').execute()
+    offset = len(response['values']) + 6
+    response = sheet.values().append(spreadsheetId=SPREADSHEET_ID, range=f'Sheet1!A{offset}', insertDataOption='INSERT_ROWS', valueInputOption='RAW', body={'majorDimension': 'ROWS', 'values':[[date, team, result, map, score, notes]]}).execute()
 
 @bot.command()
 async def patchnotes(ctx):
