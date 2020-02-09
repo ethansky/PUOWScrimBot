@@ -1,4 +1,3 @@
-# -*- coding: utf8 -*-
 from __future__ import print_function
 
 import os.path
@@ -26,7 +25,6 @@ try:
     if os.path.exists('token.pickle'):
         with open('token.pickle', 'rb') as token:
             creds = pickle.load(token)
-            pprint(vars(creds))
     if not creds or not creds.valid:
         if creds and creds.expired and creds.refresh_token:
             creds.refresh(Request())
@@ -67,7 +65,9 @@ try:
             response = sheet.values().append(spreadsheetId=SPREADSHEET_ID, range=f'Sheet1!A{offset}', insertDataOption='INSERT_ROWS', valueInputOption='RAW', body={'majorDimension': 'ROWS', 'values':[[date, team, result, map, score, notes]]}).execute()
         else:
             await ctx.send('Invalid number of arguments')
+
 except Exception as e:
+    print('Unable to connected to Google Sheets')
     print(f'Error occured: {e}')
 
 # init Discord bot API
