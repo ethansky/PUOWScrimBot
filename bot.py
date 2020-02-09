@@ -1,15 +1,15 @@
 from __future__ import print_function
 
+import json
 import os.path
 import pickle
-import json
-import discord
 from pprint import pprint
+
+import discord
 from discord.ext import commands
 from google.auth.transport.requests import Request
 from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
-
 
 with open('ids.json') as json_file:
     data = json.load(json_file)
@@ -17,6 +17,7 @@ with open('ids.json') as json_file:
 SCOPES = ['https://www.googleapis.com/auth/spreadsheets/']
 SPREADSHEET_ID = data['spreadsheetID']
 BOT_TOKEN = data['botToken']
+SPREADSHEETS_CONNECTED = False
 
 # init Google Spreadsheets API
 print('Connecting to Google Sheets API...')
@@ -35,10 +36,26 @@ try:
             pickle.dump(creds, token)
     service = build('sheets', 'v4', credentials=creds)
     sheet = service.spreadsheets()
+    SPREADSHEETS_CONNECTED = True
     print('Connected to Google Sheets API')
+    
+except Exception as e:
+    print('Unable to connected to Google Sheets')
+    print(f'Error occured: {e}')
 
-    #init bot command for spreadsheet
+# init Discord bot API
 
+print('Connecting to Discord bot API...')
+bot = commands.Bot(command_prefix='?')
+
+@bot.event
+async def on_ready():
+    print(f'Logged in as:\n{bot.user.name}\n{bot.user.id}\n------')
+
+# bot commands
+
+#init bot command for spreadsheet
+if SPREADSHEETS_CONNECTED:
     @bot.command()
     async def mapwr(ctx, map: str):
         result = sheet.values().batchGet(spreadsheetId=SPREADSHEET_ID, ranges=['Sheet1!H6:H26','Sheet1!L6:L26']).execute()
@@ -66,20 +83,6 @@ try:
         else:
             await ctx.send('Invalid number of arguments')
 
-except Exception as e:
-    print('Unable to connected to Google Sheets')
-    print(f'Error occured: {e}')
-
-# init Discord bot API
-
-print('Connecting to Discord bot API...')
-bot = commands.Bot(command_prefix='?')
-
-@bot.event
-async def on_ready():
-    print(f'Logged in as:\n{bot.user.name}\n{bot.user.id}\n------')
-
-# bot commands
 
 @bot.command()
 async def patchnotes(ctx):
